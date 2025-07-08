@@ -48,4 +48,5 @@ jobs:
 
       - name: Run Test Code
         run: |
-          uv pip install pyarrow
+          uv pip install pyarrow connectorx
+          uv run test.py
