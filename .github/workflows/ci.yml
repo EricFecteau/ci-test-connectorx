@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  rust:
+  test:
     runs-on: ubuntu-latest
     container: ubuntu:24.04
     services:
@@ -32,15 +32,9 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
 
       - name: Seed the database
-        run: just seed-db
+        run: psql $POSTGRES_URL -f scripts/postgres.sql
         env:
           POSTGRES_URL: "postgresql://postgres:postgres@postgres:5432/postgres"
-          SQLITE_URL: "sqlite:///tmp/test.db"
-          MYSQL_HOST: mysql
-          MYSQL_PORT: 3306
-          MYSQL_DB: mysql
-          MYSQL_USER: root
-          MYSQL_PASSWORD: mysql
 
       - uses: actions/setup-python@v5
         with:
