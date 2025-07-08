@@ -46,5 +46,12 @@ jobs:
         with:
             python-version: ${{ matrix.python-version }}
 
-    script:
-      - pip install connector-x
+      - name: Install the latest version of uv
+        uses: astral-sh/setup-uv@v6
+        with:
+          version: "latest"
+          activate-environment: true
+
+      - name: Run Test Code
+        run: |
+          uv pip install pyarrow
