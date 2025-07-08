@@ -1,0 +1,50 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  rust:
+    runs-on: ubuntu-latest
+    container: ubuntu:24.04
+    services:
+      postgres:
+        image: pgvector/pgvector:pg17
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    strategy:
+      matrix:
+        python-version: ["3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install tools
+        run: |
+          apt-get update
+          apt-get install -y wget curl postgresql-client build-essential pkg-config libssl-dev git sqlite3 libsqlite3-dev mysql-client python3 python3-pip libkrb5-dev libclang-dev
+        env:
+          DEBIAN_FRONTEND: noninteractive
+
+      - name: Seed the database
+        run: just seed-db
+        env:
+          POSTGRES_URL: "postgresql://postgres:postgres@postgres:5432/postgres"
+          SQLITE_URL: "sqlite:///tmp/test.db"
+          MYSQL_HOST: mysql
+          MYSQL_PORT: 3306
+          MYSQL_DB: mysql
+          MYSQL_USER: root
+          MYSQL_PASSWORD: mysql
+
+      - uses: actions/setup-python@v5
+        with:
+            python-version: ${{ matrix.python-version }}
+
+    script:
+      - pip install connector-x
