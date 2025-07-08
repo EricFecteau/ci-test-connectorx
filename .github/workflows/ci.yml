@@ -32,7 +32,7 @@ jobs:
           DEBIAN_FRONTEND: noninteractive
 
       - name: Seed the database
-        run: psql $POSTGRES_URL -f scripts/postgres.sql
+        run: psql $POSTGRES_URL -f postgres.sql
         env:
           POSTGRES_URL: "postgresql://postgres:postgres@postgres:5432/postgres"
 
